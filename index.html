@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wyversium - An Ark-like DnD Style Game with Wyverns</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome CDN -->
+    <style>
+        :root {
+            --primary-color: #ff9900;
+            --bg-color: #1a1a1a;
+            --secondary-bg: #2a2a2a;
+            --accent-bg: #4a4a4a;
+            --text-light: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cinzel', serif;
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        
+
+        nav {
+            background-color: #333;
+            padding: 1em;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin: 0 1.5em;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1em 2em;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center; /* Align icon and text */
+            justify-content: center;
+        }
+
+        .cta-button:hover {
+            background-color: #cc7a00;
+            transform: scale(1.05);
+        }
+
+        .cta-button i {
+            margin-right: 8px; /* Space between icon and text */
+        }
+
+        body::-webkit-scrollbar {
+            width: 12px;
+        }
+        body::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+        body::-webkit-scrollbar-thumb {
+            background-color: var(--accent-bg);
+            border-radius: 6px;
+            border: 3px solid var(--secondary-bg);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--secondary-bg), var(--accent-bg));
+            padding: 2em 1em;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin: 0;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .wyvern-fly {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: url('smallred.png') no-repeat center;
+            background-size: contain;
+            animation: fly 10s infinite linear;
+            pointer-events: none;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 1em;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin: 0 1.5em;
+            font-size: 1.2em;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        main {
+            padding: 2em 1em;
+        }
+
+        section {
+            background-color: var(--secondary-bg);
+            margin-bottom: 2em;
+            padding: 2em;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .parallax {
+            background: url('10.png') no-repeat center center fixed;
+            background-size: cover;
+            height: 400px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            text-shadow: 2px 2px 4px #000;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1em 2em;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #cc7a00;
+            transform: scale(1.05);
+        }
+
+        .carousel-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screenshot-slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .screenshot-slider img {
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+            margin: 0 1em;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1em;
+            margin-top: 1em;
+        }
+
+        .carousel-controls button {
+            background: var(--accent-bg);
+            color: var(--text-light);
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .carousel-controls button:hover {
+            background: var(--primary-color);
+        }
+
+        #playtest-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        #playtest-form input, #playtest-form button {
+            padding: 1em;
+            border-radius: 5px;
+            border: none;
+        }
+
+        #playtest-form button {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        footer {
+            background-color: #333;
+            color: var(--text-light);
+            padding: 1em;
+            text-align: center;
+            margin-top: 2em;
+        }
+
+        .social-links a {
+            color: var(--text-light);
+            margin: 0 1em;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .wyvern-flip {
+            transform: scaleX(-1);
+            animation: flip 1s infinite alternate;
+        }
+        
+        .wyvern-fly {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: url('smallred.png') no-repeat center;
+            background-size: contain;
+            pointer-events: none;
+        }
+
+        .wyvern-left-to-right {
+        animation: fly 10s infinite linear;
+        transform: scaleX(1); /* No flip for wyverns going left to right */
+        }
+
+        .wyvern-right-to-left {
+            animation: fly-reverse 10s infinite linear;
+            transform: scaleX(-1); /* Flip for wyverns going right to left */
+        }
+
+        /* Wyvern from left to right */
+        @keyframes fly {
+            0% { left: -10%; transform: rotate(0deg); }
+            50% { left: 110%; transform: rotate(10deg); }
+            100% { left: -10%; transform: rotate(0deg); }
+        }
+
+        /* Wyvern from right to left, with flip */
+        @keyframes fly-reverse {
+            0% { left: 110%; transform: scaleX(-1) rotate(0deg); }
+            50% { left: -10%; transform: scaleX(-1) rotate(-10deg); }
+            100% { left: 110%; transform: scaleX(-1) rotate(0deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 2em; }
+            nav a { margin: 0.5em 1em; }
+            .parallax { height: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Wyversium</h1>
+        <p>An Ark-like DnD Style Game with Wyverns</p>
+        <div class="wyvern-fly wyvern-left-to-right" style="top: 10%; animation-duration: 10s;"></div>
+        <div class="wyvern-fly wyvern-right-to-left" style="top: 30%; animation-duration: 15s;"></div>
+        <div class="wyvern-fly wyvern-left-to-right" style="top: 50%; animation-duration: 12s;"></div>
+        
+    </header>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About the Game</a>
+        <a href="#playtest">Playtest</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <main>
+        <section id="home" class="parallax">
+            <div>
+                <h2>Welcome to Wyversium</h2>
+                <p>Dive into a world full of wyverns and adventures!</p>
+                <a href="#playtest" class="cta-button">Register for Playtest</a>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About the game</h2>
+            <div></div>
+                <a href="https://discord.gg/your_discord_link" target="_blank" class="cta-button" style="background-color: #7289da;">
+                    <i class="fab fa-discord" style="font-size: 20px;"></i> <!-- Discord Icon -->
+                    Join Discord
+                </a>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5em;">
+                <div>
+                    <h3>Open World Exploration</h3>
+                    <img src="9.png" alt="Open World Exploration" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
+                    <p>Journey across vast landscapes, each full of secrets, dangers, and opportunities. Discover hidden locations, face off against mythical creatures, and uncover long-forgotten histories.</p>
+                </div>
+                <div>
+                    <h3>Crafting and Building</h3>
+                    <img src="5.png" alt="Crafting and Building" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
+                    <p>Gather resources from the environment to craft weapons, armor, and tools that will help you survive and thrive. Build your own base to protect yourself from hostile forces or simply to call it home.</p>
+                </div>
+                <div>
+                    <h3>Multiplayer Co-op</h3>
+                    <img src="3.png" alt="Multiplayer Co-op" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
+                    <p>Team up with friends or brave adventurers from around the globe. Work together to build, explore, and survive—or choose to go rogue and create your own path.</p>
+                </div>
+                <div>
+                    <h3>Survival and Combat</h3>
+                    <img src="6.png" alt="Survival and Combat" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
+                    <p>Every decision matters. Hunt for food, gather resources, and craft powerful weapons to defend yourself from fierce monsters and other players. Fight in both large-scale battles and intimate encounters in real-time combat.</p>
+                </div>
+                <div>
+                    <h3>Dark Fantasy Setting</h3>
+                    <img src="7.png" alt="Dark Fantasy Setting" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
+                    <p>Immerse yourself in a world inspired by Dungeons & Dragons, with creatures, magic, and lore that will challenge your wits and willpower. Encounter dark forces that will test your courage at every turn.</p>
+                </div>
+            </div>
+            <h3>Screenshots:</h3>
+            <div class="carousel-container">
+                <div class="screenshot-slider" id="slider">
+                    <img src="6.png" alt="Screenshot 3">
+                    <img src="7.png" alt="Screenshot 4">
+                    <img src="8.png" alt="Screenshot 2">
+                    <img src="9.png" alt="Screenshot 3">
+                    <img src="10.png" alt="Screenshot 4">
+                    <img src="1.png" alt="Screenshot 1">
+                    <img src="2.png" alt="Screenshot 2">
+                    <img src="3.png" alt="Screenshot 3">
+                    <img src="4.png" alt="Screenshot 4">
+                    <img src="5.png" alt="Screenshot 2">
+                </div>
+                <div class="carousel-controls">
+                    <button onclick="slide(-1)">&larr;</button>
+                    <button onclick="slide(1)">&rarr;</button>
+                </div>
+            </div>
+            <p>Are you ready to face the darkness and uncover the secrets of Wyversium? Adventure awaits.</p>
+        </section>
+
+        <section id="playtest">
+            <h2>Playtest Registration</h2>
+            <form id="playtest-form">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
+                <button type="submit">Register</button>
+            </form>
+        </section>
+
+      
+        <section id="about-me">
+            <h2>About the Developer</h2>
+            <div style="display: flex; align-items: center; gap: 2em; margin-bottom: 1.5em;">
+                <img src="pb.png" alt="Christoph Fuchs" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
+                <div>
+                    <p>Hello, my name is Christoph Fuchs! I'm a solo indie developer with a deep passion for fantasy worlds and all their fascinating aspects. As a self-taught individual, I've acquired the skills to bring projects like Wyversium to life.</p>
+                    <p>It fills me with joy to create immersive experiences that transport players to fantastical realms. Wyversium is a project close to my heart, combining my love for Dungeons & Dragons, survival games, and of course, dark fantasy.</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1em; justify-content: left;">
+                <a href="https://discord.gg/eZxCPd6HsH" target="_blank" class="cta-button" style="background-color: #7289da;">
+                    <i class="fab fa-discord" style="font-size: 20px;"></i> <!-- Discord Icon -->
+                    Join Discord
+                </a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Wyversium2</p>
+        <div class="social-links">
+            <a href="#">Twitter</a>
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+        </div>
+    </footer>
+
+    <script>
+        
+        const sections = document.querySelectorAll('section');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.2 });
+        sections.forEach(section => observer.observe(section));
+
+        document.getElementById('playtest-form').addEventListener('submit', e => {
+            e.preventDefault();
+            alert('Thank you for your registration!');
+            e.target.reset();
+        });
+
+        let sliderIndex = 0;
+        const slider = document.getElementById('slider');
+        const slides = slider.querySelectorAll('img');
+
+        function slide(direction) {
+            sliderIndex = (sliderIndex + direction + slides.length) % slides.length;
+            slider.style.transform = `translateX(-${sliderIndex * (slides[0].clientWidth + 32)}px)`;
+        }
+        document.querySelectorAll('.wyvern-fly').forEach(wyvern => {
+        wyvern.addEventListener('animationend', () => {
+            // Dynamically set the class based on the flight direction
+            if (wyvern.classList.contains('wyvern-left-to-right')) {
+                wyvern.classList.remove('wyvern-left-to-right');
+                wyvern.classList.add('wyvern-right-to-left'); // Reverse direction to the left
+            } else if (wyvern.classList.contains('wyvern-right-to-left')) {
+                wyvern.classList.remove('wyvern-right-to-left');
+                wyvern.classList.add('wyvern-left-to-right'); // Reverse direction back to the right
+            }
+        });
+        });
+
+
+    </script>
+</body>
+</html>
