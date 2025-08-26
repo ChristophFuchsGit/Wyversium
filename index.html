@@ -1,478 +1,411 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wyversium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome CDN -->
-    <style>
-        :root {
-            --primary-color: #ff9900;
-            --bg-color: #1a1a1a;
-            --secondary-bg: #2a2a2a;
-            --accent-bg: #4a4a4a;
-            --text-light: #fff;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wyversium – Dark Fantasy Survival with Wyverns</title>
+  <meta name="description" content="Wyversium is a dark-fantasy survival game with wyverns. Explore, craft, build, and play co‑op. Join the playtest and wishlist on Steam." />
+  <meta name="theme-color" content="#ff9900" />
 
-        * {
-            box-sizing: border-box;
-        }
+  <!-- Performance: preconnect for Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 
-        body {
-            font-family: 'Cinzel', serif;
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
+  <style>
+    :root {
+      --primary: #ff9900;
+      --primary-alt: #cc7a00;
+      --bg: #121212;
+      --surface: #1d1d1d;
+      --surface-2: #262626;
+      --text: #f8f8f8;
+      --muted: #c8c8c8;
+      --accent: #4a4a4a;
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --nav-h: 68px;
+    }
 
-        
+    /* Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); color-scheme: dark; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: 'Cinzel', serif; line-height: 1.5; overflow-x: hidden;
+    }
+    img { max-width: 100%; display: block; height: auto; }
+    a { color: inherit; text-underline-offset: .2em; }
+    .container { width: min(1100px, 92vw); margin-inline: auto; }
+    .sr-only { position: absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .skip-link { position:absolute; left:-999px; top:0; background:#000; color:#fff; padding:.6rem 1rem; z-index:9999; border-radius:10px; }
+    .skip-link:focus { left: 1rem; top: 1rem; }
 
-        nav {
-            background-color: #333;
-            padding: 1em;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap:.6rem; justify-content:center;
+      padding:.85rem 1.25rem; background: var(--primary); color: #fff;
+      border-radius: var(--radius); text-decoration: none; border: none;
+      cursor: pointer; transition: transform .2s ease, filter .2s ease, background .2s ease; box-shadow: var(--shadow);
+      font-weight: 700;
+    }
+    .btn:hover { transform: translateY(-2px); background: var(--primary-alt); }
+    .btn:active { transform: translateY(0); filter: brightness(.95); }
+    .btn--ghost { background: transparent; border:1px solid var(--accent); box-shadow:none; }
+    .btn--discord { background:#7289da; }
+    .btn--discord:hover { filter: brightness(1.08); }
+    .btn--steam { background:#2d8fdf; }
+    .btn--steam:hover { filter: brightness(1.08); }
 
-        nav a {
-            color: var(--text-light);
-            text-decoration: none;
-            margin: 0 1.5em;
-            font-size: 1.2em;
-            transition: color 0.3s ease;
-        }
+    /* Header + Nav */
+    .site-header {
+      position: relative; isolation: isolate;
+      background: radial-gradient(1200px 400px at 50% -10%, #2a2a2a, transparent), linear-gradient(135deg, var(--surface), var(--surface-2));
+      padding-block: clamp(2rem, 6vw, 4rem);
+      box-shadow: var(--shadow);
+    }
+    .site-title { text-align:center; margin: 0 0 .25rem; font-size: clamp(2rem, 6vw, 3.25rem); }
+    .site-subtitle { text-align:center; margin: 0; color: var(--muted); font-size: clamp(1rem, 2.5vw, 1.25rem); }
 
-        .cta-button {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            padding: 1em 2em;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center; /* Align icon and text */
-            justify-content: center;
-        }
+    .wyvern { position:absolute; width:84px; height:84px; background:url('smallred.png') center/contain no-repeat; pointer-events:none; opacity:.9; }
+    .wyvern--ltr { animation: fly-x 14s linear infinite; }
+    .wyvern--rtl { animation: fly-x-rev 16s linear infinite; transform: scaleX(-1); }
+    @keyframes fly-x { 0%{ left:-10%; top:10%; transform: translateY(0) } 50%{ left:110%; top:18%; transform: translateY(-6px) rotate(2deg) } 100%{ left:-10%; top:10%; transform: translateY(0) } }
+    @keyframes fly-x-rev { 0%{ left:110%; top:55%; } 50%{ left:-10%; top:45%; } 100%{ left:110%; top:55%; } }
 
-        .cta-button:hover {
-            background-color: #cc7a00;
-            transform: scale(1.05);
-        }
+    nav[role="navigation"] {
+      position: sticky; top: 0; z-index: 50; background: #1a1a1aee; backdrop-filter: blur(6px);
+      border-bottom:1px solid #2a2a2a;
+    }
+    .nav {
+      height: var(--nav-h); display:flex; align-items:center; justify-content:space-between; gap:1rem;
+    }
+    .brand { display:flex; align-items:center; gap:.6rem; font-weight:700; letter-spacing:.04em; }
+    .brand i { font-size:1.25rem; color: var(--primary); }
 
-        .cta-button i {
-            margin-right: 8px; /* Space between icon and text */
-        }
+    .nav__toggle { display:none; background:transparent; border:1px solid var(--accent); padding:.55rem .8rem; border-radius:12px; color:#fff; }
+    .nav__menu { display:flex; gap: clamp(.6rem, 2vw, 1.25rem); list-style:none; margin:0; padding:0; align-items:center; }
+    .nav__menu a { text-decoration:none; color:#fff; font-size:1.05rem; padding:.4rem .6rem; border-radius:10px; }
+    .nav__menu a:hover, .nav__menu a[aria-current="page"] { background: #262626; color: var(--primary); }
 
-        body::-webkit-scrollbar {
-            width: 12px;
-        }
-        body::-webkit-scrollbar-track {
-            background: var(--secondary-bg);
-        }
-        body::-webkit-scrollbar-thumb {
-            background-color: var(--accent-bg);
-            border-radius: 6px;
-            border: 3px solid var(--secondary-bg);
-        }
+    @media (max-width: 860px) {
+      .nav__toggle { display:inline-block; }
+      .nav__menu { position: fixed; inset: calc(var(--nav-h) + 6px) 0 auto 0; background: #141414; border-top:1px solid #2a2a2a;
+        display: grid; gap: .2rem; padding: .8rem; transform-origin: top; transform: scaleY(0); transition: transform .2s ease; }
+      .nav--open .nav__menu { transform: scaleY(1); }
+    }
 
-        header {
-            background: linear-gradient(135deg, var(--secondary-bg), var(--accent-bg));
-            padding: 2em 1em;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
+    /* Sections */
+    section { background: var(--surface); border-radius: var(--radius); padding: clamp(1.25rem, 3.5vw, 2rem); box-shadow: var(--shadow); margin-block: clamp(1rem, 3vw, 1.5rem); }
+    section.reveal { opacity:0; translate: 0 28px; transition: opacity .6s ease, translate .6s ease; }
+    section.reveal.is-visible { opacity:1; translate: 0 0; }
+    section:target { outline: 2px solid var(--primary); }
 
-        header h1 {
-            font-size: 3em;
-            margin: 0;
-            animation: fadeIn 2s ease-in;
-        }
+    /* Hero */
+    .hero { position: relative; border-radius: var(--radius); overflow: clip; display:grid; place-items:center; min-height: clamp(380px, 62vh, 720px); text-align:center; }
+    .hero::before { content:""; position:absolute; inset:0; background:url('10.png') center/cover no-repeat fixed; filter: saturate(1.05) contrast(1.05); z-index:-1; }
+    .hero::after { content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55)); z-index:-1; }
+    .hero h2 { font-size: clamp(1.6rem, 5vw, 2.4rem); margin:.25rem 0 .5rem; }
+    .hero p { color: var(--muted); margin: 0 0 1rem; }
+    .hero .btn { font-size: clamp(1rem, 2.5vw, 1.05rem); }
 
-        .wyvern-fly {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            background: url('smallred.png') no-repeat center;
-            background-size: contain;
-            animation: fly 10s infinite linear;
-            pointer-events: none;
-        }
+    /* Features grid */
+    .features { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: clamp(1rem, 2.5vw, 1.25rem); }
+    .feature { background: var(--surface-2); border-radius: 12px; padding: 1rem; display:grid; gap:.6rem; }
+    .feature img { border-radius: 10px; aspect-ratio: 16/9; object-fit: cover; }
 
-        nav {
-            background-color: #333;
-            padding: 1em;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    /* Carousel */
+    .carousel { position: relative; overflow: hidden; border-radius: var(--radius); background: #0e0e0e; }
+    .carousel__track { display: flex; width: 100%; transition: transform .45s ease-in-out; }
+    .carousel__slide { min-width: 100%; padding: .75rem; display:grid; place-items:center; }
+    .carousel__slide img { width: 100%; max-width: 1100px; border-radius: 12px; aspect-ratio: 16/9; object-fit: cover; }
+    .carousel__controls { position:absolute; inset: auto 0 10px 0; display:flex; justify-content:center; gap:.5rem; }
+    .carousel__btn { background: #1f1f1f; border:1px solid #333; padding:.5rem .8rem; border-radius:10px; cursor:pointer; color:#fff; }
+    .carousel__btn:hover { background: #2a2a2a; }
+    .carousel__dots { display:flex; gap:.4rem; justify-content:center; margin-top:.75rem; }
+    .carousel__dot { width:10px; height:10px; border-radius:99px; border:none; background:#3a3a3a; cursor:pointer; }
+    .carousel__dot[aria-current="true"] { background: var(--primary); }
 
-        nav a {
-            color: var(--text-light);
-            text-decoration: none;
-            margin: 0 1.5em;
-            font-size: 1.2em;
-            transition: color 0.3s ease;
-        }
+    /* Forms */
+    form { display:grid; gap:.8rem; }
+    label { font-weight:700; }
+    input, button, textarea { font: inherit; }
+    input[type="email"], input[type="text"], textarea {
+      background:#101010; border:1px solid #2b2b2b; color:#fff; border-radius:12px; padding:.9rem 1rem; width:100%;
+    }
+    .form-row { display:grid; grid-template-columns: 1fr; gap:.8rem; }
+    .consent { display:flex; align-items:start; gap:.6rem; font-size:.95rem; color: var(--muted); }
+    .status { min-height: 1.3em; color: var(--muted); }
 
-        nav a:hover {
-            color: var(--primary-color);
-        }
+    /* Footer */
+    footer { text-align:center; color: var(--muted); padding: 2rem 1rem 2.5rem; }
+    .social { display:flex; gap:.8rem; justify-content:center; margin-top:.5rem; }
+    .social a { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:12px; background:#1f1f1f; border:1px solid #2a2a2a; }
+    .social a:hover { background:#2a2a2a; color: var(--primary); }
 
-        main {
-            padding: 2em 1em;
-        }
-
-        section {
-            background-color: var(--secondary-bg);
-            margin-bottom: 2em;
-            padding: 2em;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s ease-out;
-        }
-
-        section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .parallax {
-            background: url('10.png') no-repeat center center fixed;
-            background-size: cover;
-            height: 400px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #fff;
-            text-shadow: 2px 2px 4px #000;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            padding: 1em 2em;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .cta-button:hover {
-            background-color: #cc7a00;
-            transform: scale(1.05);
-        }
-
-        .carousel-container {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .screenshot-slider {
-            display: flex;
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .screenshot-slider img {
-            flex-shrink: 0;
-            width: 100%;
-            max-width: 400px;
-            height: auto;
-            border-radius: 10px;
-            margin: 0 1em;
-        }
-
-        .carousel-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1em;
-            margin-top: 1em;
-        }
-
-        .carousel-controls button {
-            background: var(--accent-bg);
-            color: var(--text-light);
-            border: none;
-            padding: 0.5em 1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .carousel-controls button:hover {
-            background: var(--primary-color);
-        }
-
-        #playtest-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1em;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        #playtest-form input, #playtest-form button {
-            padding: 1em;
-            border-radius: 5px;
-            border: none;
-        }
-
-        #playtest-form button {
-            background-color: var(--primary-color);
-            color: var(--text-light);
-            cursor: pointer;
-        }
-
-        footer {
-            background-color: #333;
-            color: var(--text-light);
-            padding: 1em;
-            text-align: center;
-            margin-top: 2em;
-        }
-
-        .social-links a {
-            color: var(--text-light);
-            margin: 0 1em;
-            text-decoration: none;
-        }
-
-        .social-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .wyvern-flip {
-            transform: scaleX(-1);
-            animation: flip 1s infinite alternate;
-        }
-        
-        .wyvern-fly {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            background: url('smallred.png') no-repeat center;
-            background-size: contain;
-            pointer-events: none;
-        }
-
-        .wyvern-left-to-right {
-        animation: fly 10s infinite linear;
-        transform: scaleX(1); /* No flip for wyverns going left to right */
-        }
-
-        .wyvern-right-to-left {
-            animation: fly-reverse 10s infinite linear;
-            transform: scaleX(-1); /* Flip for wyverns going right to left */
-        }
-
-        /* Wyvern from left to right */
-        @keyframes fly {
-            0% { left: -10%; transform: rotate(0deg); }
-            50% { left: 110%; transform: rotate(10deg); }
-            100% { left: -10%; transform: rotate(0deg); }
-        }
-
-        /* Wyvern from right to left, with flip */
-        @keyframes fly-reverse {
-            0% { left: 110%; transform: scaleX(-1) rotate(0deg); }
-            50% { left: -10%; transform: scaleX(-1) rotate(-10deg); }
-            100% { left: 110%; transform: scaleX(-1) rotate(0deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @media (max-width: 768px) {
-            header h1 { font-size: 2em; }
-            nav a { margin: 0.5em 1em; }
-            .parallax { height: 250px; }
-        }
-    </style>
+    /* Reduce motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .wyvern--ltr, .wyvern--rtl, .carousel__track { animation: none !important; transition: none !important; }
+      .hero::before { background-attachment: initial; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Wyversium</h1>
-        <p>An Ark-like DnD Style Game with Wyverns</p>
-        <div class="wyvern-fly wyvern-left-to-right" style="top: 10%; animation-duration: 10s;"></div>
-        <div class="wyvern-fly wyvern-right-to-left" style="top: 30%; animation-duration: 15s;"></div>
-        <div class="wyvern-fly wyvern-left-to-right" style="top: 50%; animation-duration: 12s;"></div>
-        
-    </header>
-    <nav>
-        <a href="#home">Home</a>
-        <a href="#about">About the Game</a>
-        <a href="#playtest">Playtest</a>
-        <a href="#contact">Contact</a>
-    </nav>
-    <main>
-        <section id="home" class="parallax">
-            <div>
-                <h2>Welcome to Wyversium</h2>
-                <p>Dive into a world full of wyverns and adventures!</p>
-                <a href="#playtest" class="cta-button">Register for Playtest</a>
-            </div>
-        </section>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-        <section id="about">
-            <h2>About the game</h2>
-            <div></div>
-                <a href="https://discord.gg/eZxCPd6HsH" target="_blank" class="cta-button" style="background-color: #7289da;">
-                    <i class="fab fa-discord" style="font-size: 20px;"></i> <!-- Discord Icon -->
-                    Join Discord
-                </a>
-            </div>
-            <div>
-                <a href="https://store.steampowered.com/app/3580400/Wyversium/" target="_blank" class="cta-button" style="background-color: #2d8fdf; display: inline-flex; align-items: center; padding: 10px 15px; color: #fff; text-decoration: none; border-radius: 4px;">
-                  <i class="fab fa-steam" style="font-size: 20px; margin-right: 8px;"></i> <!-- Steam Icon -->
-                  WISHLIST ON STEAM
-                </a>
-            </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5em;">
-                <div>
-                    <h3>Open World Exploration</h3>
-                    <img src="9.png" alt="Open World Exploration" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
-                    <p>Journey across vast landscapes, each full of secrets, dangers, and opportunities. Discover hidden locations, face off against mythical creatures, and uncover long-forgotten histories.</p>
-                </div>
-                <div>
-                    <h3>Crafting and Building</h3>
-                    <img src="5.png" alt="Crafting and Building" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
-                    <p>Gather resources from the environment to craft weapons, armor, and tools that will help you survive and thrive. Build your own base to protect yourself from hostile forces or simply to call it home.</p>
-                </div>
-                <div>
-                    <h3>Multiplayer Co-op</h3>
-                    <img src="3.png" alt="Multiplayer Co-op" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
-                    <p>Team up with friends or brave adventurers from around the globe. Work together to build, explore, and survive—or choose to go rogue and create your own path.</p>
-                </div>
-                <div>
-                    <h3>Survival and Combat</h3>
-                    <img src="6.png" alt="Survival and Combat" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
-                    <p>Every decision matters. Hunt for food, gather resources, and craft powerful weapons to defend yourself from fierce monsters and other players. Fight in both large-scale battles and intimate encounters in real-time combat.</p>
-                </div>
-                <div>
-                    <h3>Dark Fantasy Setting</h3>
-                    <img src="7.png" alt="Dark Fantasy Setting" style="width: 100%; border-radius: 8px; margin-bottom: 0.5em;">
-                    <p>Immerse yourself in a world inspired by Dungeons & Dragons, with creatures, magic, and lore that will challenge your wits and willpower. Encounter dark forces that will test your courage at every turn.</p>
-                </div>
-            </div>
-            <h3>Screenshots:</h3>
-            <div class="carousel-container">
-                <div class="screenshot-slider" id="slider">
-                    <img src="6.png" alt="Screenshot 3">
-                    <img src="7.png" alt="Screenshot 4">
-                    <img src="8.png" alt="Screenshot 2">
-                    <img src="9.png" alt="Screenshot 3">
-                    <img src="10.png" alt="Screenshot 4">
-                    <img src="1.png" alt="Screenshot 1">
-                    <img src="2.png" alt="Screenshot 2">
-                    <img src="3.png" alt="Screenshot 3">
-                    <img src="4.png" alt="Screenshot 4">
-                    <img src="5.png" alt="Screenshot 2">
-                </div>
-                <div class="carousel-controls">
-                    <button onclick="slide(-1)">&larr;</button>
-                    <button onclick="slide(1)">&rarr;</button>
-                </div>
-            </div>
-            <p>Are you ready to face the darkness and uncover the secrets of Wyversium? Adventure awaits.</p>
-        </section>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="site-title">Wyversium</h1>
+      <p class="site-subtitle">An Ark‑like D&amp;D‑style survival game with wyverns</p>
+    </div>
+    <div class="wyvern wyvern--ltr" style="top: 12%"></div>
+    <div class="wyvern wyvern--rtl" style="top: 48%"></div>
+    <div class="wyvern wyvern--ltr" style="top: 66%"></div>
+  </header>
 
-        <section id="playtest">
-            <h2>Playtest Registration</h2>
-            <p>We are looking for brave adventurers to help us test Wyversium!</p>
-            <p>Join the playtest and provide valuable feedback to help me shape the game.</p>
-           <form id="playtest-form"
-                action="https://formspree.io/f/xnndajge"
-                method="POST">
-                <label for="email">Email Address:</label>
-                    <input type="email" name="email">
-                <button type="submit">Register</button>
-            </form>
-        </section>
+  <nav role="navigation" aria-label="Primary">
+    <div class="container nav">
+      <div class="brand"><i class="fas fa-dragon" aria-hidden="true"></i> Wyversium</div>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="navMenu" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+      <ul id="navMenu" class="nav__menu">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About the Game</a></li>
+        <li><a href="#playtest">Playtest</a></li>
+        <li><a href="#about-me">Developer</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
 
-      
-        <section id="about-me">
-            <h2>About the Developer</h2>
-            <div style="display: flex; align-items: center; gap: 2em; margin-bottom: 1.5em;">
-                <img src="pb.png" alt="Christoph Fuchs" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);">
-                <div>
-                    <p>Hello, my name is Christoph Fuchs! I'm a solo indie developer with a deep passion for fantasy worlds and all their fascinating aspects. As a self-taught individual, I've acquired the skills to bring projects like Wyversium to life.</p>
-                    <p>It fills me with joy to create immersive experiences that transport players to fantastical realms. Wyversium is a project close to my heart, combining my love for Dungeons & Dragons, survival games, and of course, dark fantasy.</p>
-                </div>
-            </div>
-            <div style="display: flex; gap: 1em; justify-content: left;">
-                <a href="https://discord.gg/eZxCPd6HsH" target="_blank" class="cta-button" style="background-color: #7289da;">
-                    <i class="fab fa-discord" style="font-size: 20px;"></i> <!-- Discord Icon -->
-                    Join Discord
-                </a>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2025 Wyversium2</p>
-        <div class="social-links">
-            <a href="#">Twitter</a>
-            <a href="#">Facebook</a>
-            <a href="#">Instagram</a>
+  <main id="main" class="container">
+    <!-- HERO -->
+    <section id="home" class="hero reveal is-visible">
+      <div>
+        <h2>Welcome to Wyversium</h2>
+        <p>Dive into a world full of wyverns, peril, and discovery.</p>
+        <a href="#playtest" class="btn"><i class="fas fa-scroll" aria-hidden="true"></i> Register for Playtest</a>
+      </div>
+    </section>
+
+    <!-- ABOUT + CTAs -->
+    <section id="about" class="reveal">
+      <header style="display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; justify-content:space-between; margin-bottom: .75rem;">
+        <h2 style="margin:0">About the game</h2>
+        <div style="display:flex; gap:.5rem;">
+          <a href="https://discord.gg/eZxCPd6HsH" target="_blank" rel="noopener noreferrer" class="btn btn--discord"><i class="fab fa-discord" aria-hidden="true"></i> Join Discord</a>
+          <a href="https://store.steampowered.com/app/3580400/Wyversium/" target="_blank" rel="noopener noreferrer" class="btn btn--steam"><i class="fab fa-steam" aria-hidden="true"></i> Wishlist on Steam</a>
         </div>
-    </footer>
+      </header>
 
-    <script>
-        
-        const sections = document.querySelectorAll('section');
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.2 });
-        sections.forEach(section => observer.observe(section));
+      <div class="features" role="list">
+        <article class="feature" role="listitem">
+          <h3>Open World Exploration</h3>
+          <img src="9.png" alt="Vast landscape with wyvern in the distance" loading="lazy" decoding="async" />
+          <p>Journey across vast landscapes full of secrets, dangers, and opportunities. Discover hidden locations and uncover long‑forgotten histories.</p>
+        </article>
+        <article class="feature" role="listitem">
+          <h3>Crafting and Building</h3>
+          <img src="5.png" alt="Player base and crafting bench" loading="lazy" decoding="async" />
+          <p>Gather resources to craft weapons, armor, and tools. Build a fortified base to protect yourself from hostile forces.</p>
+        </article>
+        <article class="feature" role="listitem">
+          <h3>Multiplayer Co‑op</h3>
+          <img src="3.png" alt="Players cooperating in battle" loading="lazy" decoding="async" />
+          <p>Team up with friends worldwide to build, explore, and survive—or go rogue and forge your own path.</p>
+        </article>
+        <article class="feature" role="listitem">
+          <h3>Survival and Combat</h3>
+          <img src="6.png" alt="Real‑time combat against a beast" loading="lazy" decoding="async" />
+          <p>Hunt, gather, and craft powerful weapons to defend yourself from fierce monsters and other players.</p>
+        </article>
+        <article class="feature" role="listitem">
+          <h3>Dark Fantasy Setting</h3>
+          <img src="7.png" alt="Brooding dark‑fantasy environment" loading="lazy" decoding="async" />
+          <p>Immerse yourself in a D&amp;D‑inspired world of magic, creatures, and lore that will test your willpower.</p>
+        </article>
+      </div>
 
-        document.getElementById('playtest-form').addEventListener('submit', e => {
-            e.preventDefault();
-            alert('Thank you for your registration!');
-            e.target.reset();
-        });
+      <h3 style="margin-top:1.25rem">Screenshots</h3>
+      <div class="carousel" aria-roledescription="carousel" aria-label="Game screenshots">
+        <div class="carousel__track" id="carouselTrack">
+          <div class="carousel__slide"><img src="6.png" alt="Combat scene" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="7.png" alt="Dark ruins at dusk" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="8.png" alt="Wyvern soaring in the sky" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="9.png" alt="Landscape with mountains" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="10.png" alt="Forest path" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="1.png" alt="Camp at night" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="2.png" alt="Character close‑up" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="3.png" alt="Co‑op building" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="4.png" alt="Wyvern lair" loading="lazy" decoding="async"></div>
+          <div class="carousel__slide"><img src="5.png" alt="Workbench and crafting" loading="lazy" decoding="async"></div>
+        </div>
+        <div class="carousel__controls" aria-hidden="false">
+          <button type="button" class="carousel__btn" data-dir="-1" aria-label="Previous screenshot"><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
+          <button type="button" class="carousel__btn" data-dir="1" aria-label="Next screenshot"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+        </div>
+        <div class="carousel__dots" id="carouselDots" aria-label="Slide selection" role="tablist"></div>
+      </div>
 
-        let sliderIndex = 0;
-        const slider = document.getElementById('slider');
-        const slides = slider.querySelectorAll('img');
+      <p style="margin-top:1rem">Are you ready to face the darkness and uncover the secrets of Wyversium? Adventure awaits.</p>
+    </section>
 
-        function slide(direction) {
-            sliderIndex = (sliderIndex + direction + slides.length) % slides.length;
-            slider.style.transform = `translateX(-${sliderIndex * (slides[0].clientWidth + 32)}px)`;
+    <!-- PLAYTEST -->
+    <section id="playtest" class="reveal">
+      <h2>Playtest Registration</h2>
+      <p>We are looking for brave adventurers to help us test Wyversium!</p>
+      <p>Join the playtest and provide valuable feedback to help shape the game.</p>
+
+      <form id="playtest-form" action="https://formspree.io/f/xnndajge" method="POST" novalidate>
+        <div class="form-row">
+          <label for="email">Email Address</label>
+          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <label class="consent">
+          <input type="checkbox" id="consent" required />
+          <span>I agree to be contacted about the Wyversium playtest and understand that my email will be used only for this purpose.</span>
+        </label>
+        <div class="status" id="form-status" aria-live="polite"></div>
+        <button class="btn" type="submit"><i class="fas fa-paper-plane" aria-hidden="true"></i> Register</button>
+      </form>
+    </section>
+
+    <!-- DEV -->
+    <section id="about-me" class="reveal">
+      <h2>About the Developer</h2>
+      <div style="display:grid; grid-template-columns: 120px 1fr; gap:1rem; align-items:center;">
+        <img src="pb.png" alt="Christoph Fuchs portrait" loading="lazy" decoding="async" style="width:120px; height:120px; border-radius:50%; object-fit:cover; box-shadow: var(--shadow);" />
+        <div>
+          <p>Hello, I'm Christoph Fuchs — a solo indie dev with a passion for fantasy worlds. Self‑taught and driven, I'm building Wyversium to bring that world to life.</p>
+          <p>Wyversium blends my love for Dungeons &amp; Dragons, survival games, and dark fantasy into a challenging, immersive experience.</p>
+          <div style="display:flex; gap:.5rem; margin-top:.5rem;">
+            <a href="https://discord.gg/eZxCPd6HsH" target="_blank" rel="noopener noreferrer" class="btn btn--discord"><i class="fab fa-discord" aria-hidden="true"></i> Join Discord</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT (simple anchor for nav completeness) -->
+    <section id="contact" class="reveal">
+      <h2>Contact</h2>
+      <p>For press or inquiries, reach out via Discord or the Steam page above.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Wyversium</p>
+      <div class="social" aria-label="Social links">
+        <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Intersection Observer: reveal sections on scroll
+    const io = new IntersectionObserver((entries)=>{
+      for (const e of entries) {
+        if (e.isIntersecting) e.target.classList.add('is-visible');
+      }
+    }, { threshold: 0.2 });
+    document.querySelectorAll('section.reveal').forEach(s => io.observe(s));
+
+    // Mobile nav toggle + active link highlighting
+    const nav = document.querySelector('.nav');
+    const toggle = document.querySelector('.nav__toggle');
+    const menu = document.getElementById('navMenu');
+    toggle?.addEventListener('click', ()=>{
+      const open = nav.classList.toggle('nav--open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+    menu?.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>{
+      if (window.matchMedia('(max-width: 860px)').matches) {
+        nav.classList.remove('nav--open');
+        toggle?.setAttribute('aria-expanded','false');
+      }
+    }));
+
+    const links = [...menu.querySelectorAll('a')];
+    const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const highlight = () => {
+      let idx = sections.findIndex(sec => sec.getBoundingClientRect().top - 90 <= 0 && sec.getBoundingClientRect().bottom - 90 >= 0);
+      if (idx === -1) idx = 0;
+      links.forEach(l => l.removeAttribute('aria-current'));
+      links[idx]?.setAttribute('aria-current', 'page');
+    };
+    document.addEventListener('scroll', ()=>{ window.requestAnimationFrame(highlight); });
+    window.addEventListener('load', highlight);
+
+    // Carousel
+    const track = document.getElementById('carouselTrack');
+    const slides = Array.from(track.children);
+    const dotsWrap = document.getElementById('carouselDots');
+    let i = 0; let auto;
+
+    const buildDots = () => {
+      slides.forEach((_, idx) => {
+        const b = document.createElement('button');
+        b.className = 'carousel__dot';
+        b.type = 'button';
+        b.setAttribute('aria-label', `Go to slide ${idx+1}`);
+        b.addEventListener('click', ()=> goTo(idx));
+        dotsWrap.appendChild(b);
+      });
+    };
+    const updateDots = () => {
+      [...dotsWrap.children].forEach((d, idx)=>{
+        d.setAttribute('aria-current', String(idx===i));
+      });
+    };
+    const goTo = (idx) => {
+      i = (idx + slides.length) % slides.length;
+      track.style.transform = `translateX(-${i*100}%)`;
+      updateDots();
+    };
+    const next = (dir=1)=> goTo(i + dir);
+
+    document.querySelectorAll('.carousel__btn').forEach(btn=>{
+      btn.addEventListener('click', ()=> next(Number(btn.dataset.dir)));
+    });
+
+    // swipe support
+    let startX = 0; let dx = 0; let dragging = false;
+    track.addEventListener('pointerdown', (e)=>{ dragging=true; startX=e.clientX; track.setPointerCapture(e.pointerId); });
+    track.addEventListener('pointermove', (e)=>{ if(!dragging) return; dx = e.clientX - startX; track.style.transform = `translateX(calc(-${i*100}% + ${dx}px))`; });
+    const endSwipe = ()=>{ if(!dragging) return; dragging=false; if(Math.abs(dx) > 60) next(dx<0?1:-1); else goTo(i); dx = 0; };
+    track.addEventListener('pointerup', endSwipe);
+    track.addEventListener('pointercancel', endSwipe);
+    track.addEventListener('lostpointercapture', endSwipe);
+
+    const startAuto = ()=> auto = setInterval(()=> next(1), 5000);
+    const stopAuto = ()=> clearInterval(auto);
+    buildDots(); updateDots(); startAuto();
+    track.closest('.carousel').addEventListener('mouseenter', stopAuto);
+    track.closest('.carousel').addEventListener('mouseleave', startAuto);
+    document.addEventListener('visibilitychange', ()=> document.hidden ? stopAuto() : startAuto());
+
+    // Playtest form (AJAX to Formspree)
+    const form = document.getElementById('playtest-form');
+    const status = document.getElementById('form-status');
+    form?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      status.textContent = 'Submitting…';
+      const data = new FormData(form);
+      try {
+        const res = await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: data });
+        if (res.ok) {
+          form.reset();
+          status.textContent = 'Thank you! Please check your inbox for a confirmation.';
+        } else {
+          status.textContent = 'Hmm, something went wrong. Please try again later.';
         }
-        document.querySelectorAll('.wyvern-fly').forEach(wyvern => {
-        wyvern.addEventListener('animationend', () => {
-            // Dynamically set the class based on the flight direction
-            if (wyvern.classList.contains('wyvern-left-to-right')) {
-                wyvern.classList.remove('wyvern-left-to-right');
-                wyvern.classList.add('wyvern-right-to-left'); // Reverse direction to the left
-            } else if (wyvern.classList.contains('wyvern-right-to-left')) {
-                wyvern.classList.remove('wyvern-right-to-left');
-                wyvern.classList.add('wyvern-left-to-right'); // Reverse direction back to the right
-            }
-        });
-        });
-
-
-    </script>
+      } catch(err){
+        status.textContent = 'Network error. Please try again.';
+      }
+    });
+  </script>
 </body>
 </html>
